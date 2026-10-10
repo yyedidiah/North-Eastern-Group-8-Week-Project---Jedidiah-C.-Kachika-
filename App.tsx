@@ -1,0 +1,88 @@
+import { useEffect, useState, type FormEvent } from 'react'
+import MarketDashboard from './MarketDashboard'
+
+function HomePage() {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const form = new FormData(event.currentTarget)
+    const marketValue = form.get('market')
+    const market = typeof marketValue === 'string' ? marketValue.trim() : ''
+
+    if (market) {
+      window.location.hash = `markets?search=${encodeURIComponent(market)}`
+    }
+  }
+
+  return (
+    <main className="relative min-h-screen overflow-hidden bg-[#044353] font-['Trebuchet_MS','Segoe_UI',sans-serif] text-white">
+      <div className="absolute inset-0 bg-[url('/NERGHERO.jfif'),url('/hero-placeholder.svg')] bg-contain bg-center bg-no-repeat" role="img" aria-label="North Eastern Group featured property" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,20,15,0.88)_0%,rgba(10,20,15,0.57)_46%,rgba(10,20,15,0.14)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.48),transparent_45%,rgba(0,0,0,0.28))]" />
+
+      <div className="relative z-10 mx-auto flex min-h-screen w-[calc(100%-40px)] max-w-[1344px] flex-col max-[720px]:w-[calc(100%-32px)]">
+        <header className="flex min-h-24 items-center justify-between">
+          <a className="flex items-center gap-3" href="#top" aria-label="North Eastern Group home">
+            <span className="grid size-5 place-items-center tracking-[0.14em] hover:scale-105 duration-200"> 
+            <img src="/NorthEastLogo.png" alt= "North Eastrtn Group Logo" className="h-full w-full object-contain" />
+            </span>
+            <span className="origin-center text-sm font-semibold uppercase tracking-[0.18em] max-[720px]:hidden hover:scale-102 duration-200 ">North Eastern Group</span>
+          </a>
+
+          <nav className="flex items-center gap-10 text-sm text-white/80 max-[720px]:hidden" aria-label="Main navigation">
+            <a className="rounded-full border border-white/50 px-5 py-2.5 transition-colors duration-200 hover:bg-white hover:text-[#17231d] focus-visible:bg-white focus-visible:text-[#17231d]" href="#markets">Markets</a>
+            <a className="rounded-full border border-white/50 px-5 py-2.5 transition-colors duration-200 hover:bg-white hover:text-[#17231d] focus-visible:bg-white focus-visible:text-[#17231d]" href="#insights">Insights</a>
+            <a className="rounded-full border border-white/50 px-5 py-2.5 transition-colors duration-200 hover:bg-white hover:text-[#17231d] focus-visible:bg-white focus-visible:text-[#17231d]" href="#map">Map</a>
+          </nav>
+
+          <a className="rounded-full border border-white/50 px-5 py-2.5 text-sm font-medium transition-colors duration-200 hover:bg-white hover:text-[#17231d] focus-visible:bg-white focus-visible:text-[#17231d]" href="#contact">Get in touch</a>
+        </header>
+
+        <section className="flex flex-1 items-center py-12 pb-24 max-[720px]:py-14 max-[720px]:pb-20" id="top">
+          <div className="max-w-[720px]">
+            <p className="mb-5 cursor-default text-xs font-bold uppercase tracking-[0.24em] text-[#d4dfae]">Real estate intelligence</p>
+            <h1 className="max-w-[680px] cursor-default text-[clamp(42px,6vw,88px)] font-medium leading-[0.98] tracking-[-0.045em]">See the Past Present & Future.</h1>
+            <p className="mt-7 max-w-[560px] cursor-default text-lg leading-[1.65] text-white/75 max-[720px]:text-base">
+              Clear market data and local insights to help you make your next move with confidence.
+            </p>
+
+            <form className="mt-10 flex max-w-[720px] gap-3 rounded-2xl bg-white p-2 text-[#17231d] shadow-2xl shadow-black/20 max-[720px]:flex-col" onSubmit={handleSubmit}>
+              <label className="flex min-w-0 flex-1 flex-col justify-center px-4 py-2">
+                <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#6c756f]">Search a market</span>
+                <input className="mt-1 w-full border-0 bg-transparent text-sm text-[#17231d] outline-none placeholder:text-[#8d9690]" name="market" type="search" placeholder="County, Metro" />
+              </label>
+              <button className="rounded-xl border-0 bg-[#253c30] px-7 py-4 text-sm font-bold text-white transition-colors duration-200 hover:bg-[#d4dfae] hover:text-[#17231d] focus-visible:bg-[#d4dfae] focus-visible:text-[#17231d] max-[720px]:w-full" type="submit">Explore market</button>
+            </form>
+          </div>
+        </section>
+
+        <footer className="flex justify-between border-t border-white/0 py-6 text-xs text-white/60">
+          <span>Independent Property Market Analysis</span>
+          <span>Updated Monthly</span>
+        </footer>
+      </div>
+    </main>
+  )
+}
+
+function App() {
+  const [hash, setHash] = useState(() => window.location.hash)
+
+  useEffect(() => {
+    const updateHash = () => setHash(window.location.hash)
+    window.addEventListener('hashchange', updateHash)
+    return () => window.removeEventListener('hashchange', updateHash)
+  }, [])
+
+  const isDashboard = hash.startsWith('#markets')
+
+  return (
+    <div
+      key={isDashboard ? 'dashboard' : 'home'}
+      className="motion-safe:animate-[page-enter_240ms_ease-out_both]"
+    >
+      {isDashboard ? <MarketDashboard /> : <HomePage />}
+    </div>
+  )
+}
+
+export default App
